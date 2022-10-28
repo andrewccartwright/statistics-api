@@ -2,6 +2,8 @@ package com.andrewchatch.statisticsapi.methods.distributions;
 
 import java.util.HashMap;
 
+// import com.andrewchatch.statisticsapi.methods.scores.ZScore;
+
 public class Normal {
     protected double x;
     protected double popMean;
@@ -23,8 +25,8 @@ public class Normal {
         this.x = x;
     }
 
-    public void setMean(double mean) {
-        this.popMean = mean;
+    public void setMean(double popMean) {
+        this.popMean = popMean;
     }
 
     public void setStDev(double popStDev) {
@@ -43,14 +45,15 @@ public class Normal {
         return this.popStDev;
     }
 
-    private double computeZScore(double x, double mean, double stdev) {
-        double zScore = (x - mean) / stdev;
+    private double computeZScore(double x, double popMean, double popStDev) {
+        System.out.println(x + " " + popMean + " " + popStDev);
+        double zScore = (x - popMean) / popStDev;
         return zScore;
     }
 
-    private double[] normalCDF(double x, double mean, double stdev) {
-        double zScore = computeZScore(x, mean, stdev);
-        double leftArea = (1 + erfFunction(0, zScore/Math.sqrt(2), 0.00001)) / 2;
+    private double[] normalCDF(double x, double popMean, double popStDev) {
+        double zScore = computeZScore(x, popMean, popStDev);
+        double leftArea = (1 + erfFunction(0, zScore/Math.sqrt(2), 0.01)) / 2;
         double rightArea = 1 - leftArea;
 
         if (zScore < 0) {
@@ -59,7 +62,7 @@ public class Normal {
             rightArea = temp;
         }
 
-        double[] arr = {leftArea, rightArea};
+        double[] arr = {zScore, leftArea, rightArea};
         return arr;
     }
 
@@ -80,12 +83,13 @@ public class Normal {
         return area * (2 / Math.sqrt(Math.PI));
     }
 
-    public HashMap<String,Double> getProbability(double x, double mean, double stdev) {
-        double[] probs = normalCDF(x, mean, stdev);
+    public HashMap<String,Double> getProbability(double x, double popMean, double popStDev) {
+        double[] probs = normalCDF(x, popMean, popStDev);
 
         HashMap<String,Double> map = new HashMap<String,Double>();
-        map.put("P(X < x)", probs[0]);
-        map.put("P(X > x)", probs[1]);
+        map.put("Z Score", probs[0]);
+        map.put("P(X < x)", probs[1]);
+        map.put("P(X > x)", probs[2]);
 
         return map;
     }

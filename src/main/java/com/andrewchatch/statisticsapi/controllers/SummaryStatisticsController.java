@@ -12,7 +12,7 @@ import com.andrewchatch.statisticsapi.methods.summary_statistics.SummaryStatisti
 @RestController
 @RequestMapping("/summary_statistics")
 public class SummaryStatisticsController {
-    @PostMapping("/")
+    @PostMapping("")
     public Map<String, Double> getSummaryStatistics(@RequestBody SummaryStatistics stats) {
         SummaryStatistics statistics = new SummaryStatistics(stats);
         Map<String,Double> map = statistics.getSummaryStatistics();
