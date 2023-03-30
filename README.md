@@ -1,6 +1,6 @@
 # Statistics API
 
-The Statistics API is a RESTful API built using Java and Apache Maven that calculates basic statistics for a list of numbers. Users can submit a list of numbers to the API, and the API will return the mean, median, mode, and range of the list.
+The Statistics API is a RESTful API built using Java and Apache Maven that calculates a variety of basic statistics. Please see the API Endpoints section for more details.
 
 ## Table of Contents
 
