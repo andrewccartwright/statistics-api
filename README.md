@@ -1,127 +1,246 @@
 # Statistics API
 
-## Using this repository locally
-Clone the repository locally and run 
-```
-./mvnw spring-boot:run
-```
-in the root directory to start the server on https://localhost:8080
+The Statistics API is a RESTful API built using Java and Apache Maven that calculates basic statistics for a list of numbers. Users can submit a list of numbers to the API, and the API will return the mean, median, mode, and range of the list.
 
-## Endpoints
+## Table of Contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [API Endpoints](#api-endpoints)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Installation
+
+To install this project, simply clone the repository:
+
+```
+git clone https://github.com/andrewchatch/statistics-api.git
+```
+
+Then, use Apache Maven to build the project:
+
+```
+mvn package
+```
+
+
+This will create a JAR file in the `target` directory. You can run the JAR file using the following command:
+
+```
+java -jar target/statistics-api-1.0-SNAPSHOT.jar
+```
+
+
+## Usage
+
+After building and running the JAR file, you can use a tool like `curl` or `Postman` to interact with the API endpoints.
+
+## API Endpoints
+
+The Statistics API currently supports the following endpoints:
 
 ### Distributions
 
-#### Binomial
+#### POST /distributions/binomial
 
-$$
-F(X) = {n \choose x} p^x q^{n-x}
-$$
+This endpoint calculates a probability using the binomial distribution.
 
-```
-POST /distributions/binomial
-```
+**Request Body**
 
-Sample request body:
-```
+```json
 {
-  "n": int,
-  "p": double (0 ≤ p ≤ 1),
-  "x": int
+  "n": 5,
+  "x": 3,
+  "p": 0.4
 }
 ```
 
-Sample response:
-```
+**Sample Response**
+```json
 {
-    "P(X > x)": 0.5282199999999999,
-    "P(X = x)": 0.30870000000000003,
-    "P(X < x)": 0.16308000000000006,
-    "P(X ≤ x)": 0.8369199999999999,
-    "P(X ≥ x)": 0.4717800000000001
-}
-```
-#### Exponential
-
-$$
-F(x) = 1 - e^{-\lambda x}, x \geq 0
-$$
-
-```
-POST /distributions/exponential
-```
-
-Sample request body:
-```
-{
-  "x": double,
-  "lambda": double
+	"P(X > x)": 0.0870399999999999,
+	"P(X = x)": 0.23040000000000005,
+	"P(X < x)": 0.6825600000000001,
+	"P(X ≤ x)": 0.31743999999999994,
+	"P(X ≥ x)": 0.9129600000000001
 }
 ```
 
-Sample response:
-```
+#### POST /distributions/normal
+
+This endpoint calculates a probability using the normal distribution.
+
+**Request Body**
+```json
 {
-    "P(X > x)": 0.20189651799465547,
-    "P(X < x)": 0.7981034820053445
+    "x": 10,
+    "popMean": 15,
+    "popStDev": 6
 }
 ```
 
-#### Geometric
-
-$$
-F(x) = p q^{x-1}
-$$
-
-```
-POST /distributions/geometric
-```
-
-Sample request body:
-```
+**Sample Response**
+```json
 {
-  "x": int,
-  "p": double (0 ≤ p ≤ 1),
-  "includesSuccess": true
+	"Z Score": -0.8333333333333334,
+	"P(X > x)": 0.7996051529451687,
+	"P(X < x)": 0.20039484705483135
 }
 ```
 
-Sample response:
-```
+#### POST /distributions/poisson
+
+This endpoint calculates a probability using the poisson distribution.
+
+**Request Body**
+```json
 {
-    "P(X > x)": 0.9375,
-    "P(X = x)": 0.0078125,
-    "P(X < x)": 0.0546875,
-    "P(X ≤ x)": 0.9453125,
-    "P(X ≥ x)": 0.0625
+    "x": 4,
+    "lambda": 6
 }
 ```
 
-#### Normal
-
-$$
-F(x) = 1/2 \[1 + \text{erf}(\frac{z}{\sqrt{2}})\]
-$$
-
-```
-POST /distributions/normal
-```
-
-Sample request body:
-```
+**Sample Response**
+```json
 {
-  "x": double,
-  "mean": double,
-  "stdev": double
+	"P(X > x)": 0.7149434996833687,
+	"P(X = x)": 0.1338526175399834,
+	"P(X < x)": 0.15120388277664792,
+	"P(X ≤ x)": 0.848796117223352,
+	"P(X ≥ x)": 0.2850565003166313
 }
 ```
 
-Sample response:
-```
+#### POST /distributions/exponential
+
+This endpoint calculates a probability using the exponential distribution.
+
+**Request Body**
+```json
 {
-  "P(X > x)": 0.9375,
-  "P(X = x)": 0.0078125,
-  "P(X < x)": 0.0546875,
-  "P(X ≤ x)": 0.9453125,
-  "P(X ≥ x)": 0.0625
+    "x": 0.4,
+    "lambda": 4
 }
 ```
+
+**Sample Response**
+```json
+{
+	"P(X > x)": 0.20189651799465547,
+	"P(X < x)": 0.7981034820053445
+}
+```
+
+#### POST /distributions/geometric
+
+This endpoint calculates a probability using the geometric distribution.
+
+**Request Body**
+```json
+{
+    "x": 7,
+    "p": 0.5,
+    "includesSuccess": true
+}
+```
+
+**Sample Response**
+```json
+{
+	"P(X > x)": 0.9375,
+	"P(X = x)": 0.0078125,
+	"P(X < x)": 0.0546875,
+	"P(X ≤ x)": 0.9453125,
+	"P(X ≥ x)": 0.0625
+}
+```
+
+### Scores
+
+#### POST /scores/z_score
+
+This endpoint will calculate a Z score based on the input values.
+
+**Request Body**
+```json
+{
+    "x": 4,
+    "popMean": 5,
+    "popStDev": 0.7
+}
+```
+
+**Sample Response**
+```json
+{
+	"Z Score": -1.4285714285714286,
+	"P(X > x)": 0.9290487150619141,
+	"P(X < x)": 0.07095128493808589
+}
+```
+
+#### POST /scores/t_score
+
+This endpoint will calculate a T score based on the input values.
+
+**Request Body**
+```json
+{
+    "sampleMean": 6,
+    "popMean": 10,
+    "sampleStDev": 30,
+    "sampleSize": 100
+}
+```
+
+**Sample Response**
+```json
+{
+	"T Score": -1.3333333333333333,
+	"P(T < t)": 0.09274117500105655,
+	"P(T > t)": 0.9072588249989435
+}
+```
+
+### Summary Statistics
+
+#### POST /summary_statistics
+
+This endpoind will return 1-var summary statistics calculated for the entered list of numbers.
+
+**Request Body**
+```json
+{
+    "numbers": [1.0,2.0,3,3.6,9,12.4]
+}
+```
+
+**Sample Response**
+```json
+{
+	"Mean": 5.166666666666667,
+	"Minimum": 1.0,
+	"Maximum": 12.4,
+	"Mode": 1.0,
+	"Median": 3.3,
+	"Standard Deviation": 4.506735699668516,
+	"Sum": 31.0,
+	"Count": 6.0,
+	"Range": 11.4,
+	"Variance": 20.31066666666667
+}
+```
+
+## Contributing
+Contributions to this project are welcome! If you would like to contribute, please follow these steps:
+
+1. Fork the repository
+2. Create a new branch (git checkout -b feature/your-feature)
+3. Make your changes
+4. Commit your changes (git commit -m 'Add some feature')
+5. Push to the branch (git push origin feature/your-feature)
+6. Create a new Pull Request
+
+## License
+This project is licensed under the MIT License. See the LICENSE file for more details.
